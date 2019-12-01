@@ -12,6 +12,7 @@
 
 #define BREAK
 //#define SORT
+//#define FIXCANON
 
 int canonStart, killsStart, splitStart, orderStart;
 int nNode, nEdge, nGraph, nClass;
@@ -45,6 +46,7 @@ int main (int argc, char** argv) {
   eqcl = (int*) malloc (sizeof(int) * ALLOC);
   mask = (int*) malloc (sizeof(int) * ALLOC);
 
+  // parse map
   FILE* input;
   input = fopen(argv[1], "r");
 
@@ -116,7 +118,9 @@ int main (int argc, char** argv) {
 #ifdef BREAK
   totalCls += (nEdge - 1) * (nEdge + 1);
 #endif
+#ifdef FIXCANON
   totalCls += nEdge - 3;
+#endif
   printf ("p cnf %i %i\n", totalVar, totalCls);
 
   if (argc > 3) {
@@ -183,12 +187,14 @@ int main (int argc, char** argv) {
       if (j != i) printf ("-%i 0\n", NEG(i-1,j)); }
 #endif
 
+#ifdef FIXCANON
   int allone = (1 << nEdge) - 1;
   for (g = 0; g < nGraph; g++)
     for (e = 0; e < nEdge; e++)
       if (mask[g] != allone && e != 0 && e != 1 && e != (2 * nNode - 3))
         if ((mask[g] | (1 << e)) == allone)
           printf("-%i 0\n", CANON(g));
+#endif
 /*
   for (g = 0; g < nGraph; g++) {
     int count = 0;
