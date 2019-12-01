@@ -10,7 +10,7 @@
 #define SPLIT(c,m,l) ((c) * (size0 + size1) + (l) * (size0) + (m) + splitStart + 1)
 #define ORDER(c,e)   ((c - nEdge + 1) * nEdge + (e) + orderStart + 1)
 
-#define BREAK
+//#define BREAK
 //#define SORT
 //#define FIXCANON
 
