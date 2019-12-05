@@ -10,7 +10,7 @@
 #define SPLIT(c,m,l) ((c) * (size0 + size1) + (l) * (size0) + (m) + splitStart + 1)
 #define ORDER(c,e)   ((c - nEdge + 1) * nEdge + (e) + orderStart + 1)
 
-//#define BREAK
+#define BREAK	6
 //#define SORT
 //#define FIXCANON
 
@@ -180,11 +180,12 @@ int main (int argc, char** argv) {
         printf ("%i %i 0\n", -set[j], -set[k]); }
 
 #ifdef BREAK
-  for (i = 1; i < nEdge; i++) {
-    printf ("%i 0\n", NEG(i-1,i));
-    printf ("-%i 0\n", POS(i-1,i));
+  for (i = 0; i < nEdge; i++) {
+    if (i == BREAK) continue;
+    printf ("%i 0\n", NEG(i,i));
+    printf ("-%i 0\n", POS(i,i));
     for (j = 0; j < nEdge; j++)
-      if (j != i) printf ("-%i 0\n", NEG(i-1,j)); }
+      if (j != i) printf ("-%i 0\n", NEG(i,j)); }
 #endif
 
 #ifdef FIXCANON
