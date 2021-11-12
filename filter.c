@@ -46,7 +46,10 @@ int filter (int posMask, int negMask) {
       eqcl[i] = eqcl[nGraph];
       eqcl[nGraph] = c;
       count[c]--;
-      if (count[c] == 0) return -1; // ERROR!!!
+      if (count[c] == 0) {
+        printf ("c class %i is eliminated\n", c);
+        return -1; // ERROR!!!
+      }
       i--; } }
 
   return removed; }

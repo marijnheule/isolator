@@ -10,7 +10,8 @@
 #define SPLIT(c,m,l) ((c) * (size0 + size1) + (l) * (size0) + (m) + splitStart + 1)
 #define ORDER(c,e)   ((c - nEdge + 1) * nEdge + (e) + orderStart + 1)
 
-#define BREAK	6
+//#define BREAK	6
+//#define DUOHORN
 //#define SORT
 //#define FIXCANON
 
@@ -97,7 +98,7 @@ int main (int argc, char** argv) {
 //  orderStart = splitStart;
 //#endif
 
-  int totalCls = nGraph + nClass + nGraph * nCls * 3 + nCls * (size0 * (half + 1) + size1 * (nEdge - half + 1));
+  int totalCls = 2 * nCls + nGraph + nClass + nGraph * nCls * 3 + nCls * (size0 * (half + 1) + size1 * (nEdge - half + 1));
 
   for (i = 1; i <= nClass; i++) {
     for (in = 0, g = 0; g < nGraph; g++)
@@ -118,6 +119,9 @@ int main (int argc, char** argv) {
 #ifdef BREAK
   totalCls += (nEdge - 1) * (nEdge + 1);
 #endif
+#ifdef DUOHORN
+  totalCls += (nCls - nEdge + 1) * nEdge * (nEdge - 1) / 2;
+#endif
 #ifdef FIXCANON
   totalCls += nEdge - 3;
 #endif
@@ -136,6 +140,13 @@ int main (int argc, char** argv) {
     setUnits (0, 0, max);
     for (i = 0; i < max; i++)
       printf("%i 0\n", POS(nEdge-1+i,set[i])); }
+
+  // each clause has at least one positive and one negative literal
+  for (c = 0; c < nCls; c++) {
+    for (e = 0; e < nEdge; e++) printf ("%i ", POS(c,e));
+    printf ("0\n");
+    for (e = 0; e < nEdge; e++) printf ("%i ", NEG(c,e));
+    printf ("0\n"); }
 
   // if no clause KILLS a graph, it must be the CANON; nGraph.
   for (g = 0; g < nGraph; g++) {
@@ -180,14 +191,21 @@ int main (int argc, char** argv) {
         printf ("%i %i 0\n", -set[j], -set[k]); }
 
 #ifdef BREAK
+  k = 0;
   for (i = 0; i < nEdge; i++) {
     if (i == BREAK) continue;
-    printf ("%i 0\n", NEG(i,i));
-    printf ("-%i 0\n", POS(i,i));
+    printf ("%i 0\n", NEG(k,i));
+    printf ("-%i 0\n", POS(k,i));
     for (j = 0; j < nEdge; j++)
-      if (j != i) printf ("-%i 0\n", NEG(i,j)); }
+      if (j != i) printf ("-%i 0\n", NEG(k,j));
+    k++; }
 #endif
-
+#ifdef DUOHORN
+  for (i = nEdge - 1; i < nCls; i++)
+    for (j = 0; j < nEdge; j++)
+      for (k = j+1; k < nEdge; k++)
+        printf ("-%i -%i 0\n", POS(i,j), POS(i,k));
+#endif
 #ifdef FIXCANON
   int allone = (1 << nEdge) - 1;
   for (g = 0; g < nGraph; g++)
